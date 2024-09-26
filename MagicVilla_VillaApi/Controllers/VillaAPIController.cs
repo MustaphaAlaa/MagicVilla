@@ -12,10 +12,35 @@ namespace MagicVilla_VillaApi.Controllers
     public class VillaApiController : ControllerBase
     {
 
+        ILogger<VillaApiController> _log;
+        VillaDbContext _db;
+
+
+
+        public VillaApiController(ILogger<VillaApiController> log, VillaDbContext db)
+        {
+            _log = log;
+            _db = db;
+        }
+
         [HttpGet]
         public List<VillaDTO> GetAll()
         {
-            return VillaDATA.SomeData();
+
+            _log.LogInformation($"Hit GetAll() In {this.GetType().Name}");
+            return _db.Villas.Select(villa =>
+                        new VillaDTO
+                        {
+                            Id = villa.Id,
+                            Name = villa.Name,
+                            Amenity = villa.Amenity,
+                            Details = villa.Details,
+                            ImageUrl = villa.ImageUrl,
+                            Occupancy = villa.Occupancy,
+                            Rate = villa.Rate,
+                            Sqft = villa.Sqft
+                        })
+                .ToList();
 
         }
 
@@ -25,21 +50,35 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<VillaDTO?> GetVillaById(int id)
         {
+            _log.LogInformation($"Hit GetVillaById() In {this.GetType().Name}");
 
             if (id <= 0)
             {
+                _log.LogError($"id: {id}, Is Not Valid");
                 return BadRequest();
             }
 
-            VillaDTO? villa = VillaDATA.SomeData().FirstOrDefault(v => v.Id == id);
+            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == id);
 
             if (villa == null)
             {
+                _log.LogWarning($"id: {id}, Is Not Found");
                 return NotFound();
             }
 
+            VillaDTO villaDTO = new VillaDTO
+            {
+                Id = villa.Id,
+                Name = villa.Name,
+                Amenity = villa.Amenity,
+                Details = villa.Details,
+                ImageUrl = villa.ImageUrl,
+                Occupancy = villa.Occupancy,
+                Rate = villa.Rate,
+                Sqft = villa.Sqft
+            };
 
-            return Ok(villa);
+            return Ok(villaDTO);
 
         }
 
@@ -55,7 +94,7 @@ namespace MagicVilla_VillaApi.Controllers
             //if (!ModelState.IsValid)
             //    return BadRequest();
 
-            if (VillaDATA.SomeData().FirstOrDefault(v => v.Name == villa.Name) != null)
+            if (_db.Villas.FirstOrDefault(v => v.Name == villa.Name) != null)
             {
                 ModelState.AddModelError("", "Dublicated Name");
                 return BadRequest(ModelState);
@@ -68,9 +107,26 @@ namespace MagicVilla_VillaApi.Controllers
             }
 
 
-            var v = VillaDATA.CreateVillaDTO(villa);
+            var newVilla = new Villa()
+            {
 
-            return CreatedAtRoute("GETVilla", new { Id = v.Id }, v);
+                Name = villa.Name,
+                Amenity = villa.Amenity,
+                Details = villa.Details,
+                ImageUrl = villa.ImageUrl,
+                Occupancy = villa.Occupancy,
+                Rate = villa.Rate,
+                Sqft = villa.Sqft,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+
+            };
+
+            _db.Villas.Add(newVilla);
+            _db.SaveChanges();
+
+
+            return CreatedAtRoute("GETVilla", new { Id = newVilla.Id }, newVilla);
 
 
         }
@@ -86,14 +142,15 @@ namespace MagicVilla_VillaApi.Controllers
                 return BadRequest();
             }
 
-            VillaDTO? villa = VillaDATA.Villas.FirstOrDefault(v => v.Id == id);
+            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == id);
 
             if (villa == null)
             {
                 return NotFound();
             }
 
-            VillaDATA.Villas.Remove(villa);
+            _db.Villas.Remove(villa);
+            _db.SaveChanges();
 
             return NoContent();
         }
@@ -111,7 +168,7 @@ namespace MagicVilla_VillaApi.Controllers
             }
 
 
-            VillaDTO villa = VillaDATA.Villas.FirstOrDefault(v => v.Id == villaReq.Id);
+            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == villaReq.Id);
 
             if (villa == null)
             {
@@ -120,7 +177,15 @@ namespace MagicVilla_VillaApi.Controllers
 
 
             villa.Name = villaReq.Name;
+            villa.Rate = villaReq.Rate;
+            villa.Sqft = villaReq.Sqft;
+            villa.Occupancy = villaReq.Occupancy;
+            villa.Amenity = villaReq.Amenity;
+            villa.Details = villaReq.Details;
+            villa.ImageUrl = villaReq.ImageUrl;
 
+            _db.Update(villa);
+            _db.SaveChanges();
 
             return NoContent();
 
@@ -139,21 +204,48 @@ namespace MagicVilla_VillaApi.Controllers
             }
 
 
-            VillaDTO? villa = VillaDATA.Villas.FirstOrDefault(v => v.Id == id);
+            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == id);
 
             if (villa == null)
             {
                 return NotFound();
             }
 
+            VillaDTO villaDTO = new VillaDTO
+            {
+                Id = villa.Id,
+                Name = villa.Name,
+                Amenity = villa.Amenity,
+                Details = villa.Details,
+                ImageUrl = villa.ImageUrl,
+                Occupancy = villa.Occupancy,
+                Rate = villa.Rate,
+                Sqft = villa.Sqft
+            };
 
-            patchDocument.ApplyTo(villa, ModelState);
+            patchDocument.ApplyTo(villaDTO, ModelState);
+
+
+
+
+            villa.Name = villaDTO.Name;
+            villa.Amenity = villaDTO.Amenity;
+            villa.Details = villaDTO.Details;
+            villa.ImageUrl = villaDTO.ImageUrl;
+            villa.Occupancy = villaDTO.Occupancy;
+            villa.Rate = villaDTO.Rate;
+            villa.Sqft = villaDTO.Sqft;
+
+
+            _db.Update(villa);
+            _db.SaveChanges();
+
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return NoContent();
 
+            return NoContent();
         }
 
 
