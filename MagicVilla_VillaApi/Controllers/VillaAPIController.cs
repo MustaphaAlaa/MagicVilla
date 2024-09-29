@@ -1,9 +1,12 @@
-﻿using MagicVilla_VillaApi.Model;
+﻿using AutoMapper;
+using MagicVilla_VillaApi.Model;
 using MagicVilla_VillaApi.Model.DTO;
+using MagicVilla_VillaApi.Repository.interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MagicVilla_VillaApi.Controllers
 {
@@ -12,35 +15,27 @@ namespace MagicVilla_VillaApi.Controllers
     public class VillaApiController : ControllerBase
     {
 
-        ILogger<VillaApiController> _log;
-        VillaDbContext _db;
+        private readonly ILogger<VillaApiController> _log;
+        private readonly IVillaRepository _dbvilla;
+        private readonly IMapper _mappper;
 
 
-
-        public VillaApiController(ILogger<VillaApiController> log, VillaDbContext db)
+        public VillaApiController(IMapper mapper, ILogger<VillaApiController> log, IVillaRepository db)
         {
+            _mappper = mapper;
             _log = log;
-            _db = db;
+            _dbvilla = db;
         }
 
         [HttpGet]
-        public List<VillaDTO> GetAll()
+        public async Task<ActionResult<VillaDTO>> GetAll()
         {
 
             _log.LogInformation($"Hit GetAll() In {this.GetType().Name}");
-            return _db.Villas.Select(villa =>
-                        new VillaDTO
-                        {
-                            Id = villa.Id,
-                            Name = villa.Name,
-                            Amenity = villa.Amenity,
-                            Details = villa.Details,
-                            ImageUrl = villa.ImageUrl,
-                            Occupancy = villa.Occupancy,
-                            Rate = villa.Rate,
-                            Sqft = villa.Sqft
-                        })
-                .ToList();
+
+            var villas = await _dbvilla.GetAllAsync();
+
+            return Ok(_mappper.Map<IEnumerable<VillaDTO>>(villas));
 
         }
 
@@ -48,7 +43,7 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<VillaDTO?> GetVillaById(int id)
+        public async Task<ActionResult<CreateVillaRequest?>> GetVillaById(int id)
         {
             _log.LogInformation($"Hit GetVillaById() In {this.GetType().Name}");
 
@@ -58,7 +53,7 @@ namespace MagicVilla_VillaApi.Controllers
                 return BadRequest();
             }
 
-            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == id);
+            Villa? villa = await _dbvilla.Get(v => v.Id == id);
 
             if (villa == null)
             {
@@ -66,20 +61,7 @@ namespace MagicVilla_VillaApi.Controllers
                 return NotFound();
             }
 
-            VillaDTO villaDTO = new VillaDTO
-            {
-                Id = villa.Id,
-                Name = villa.Name,
-                Amenity = villa.Amenity,
-                Details = villa.Details,
-                ImageUrl = villa.ImageUrl,
-                Occupancy = villa.Occupancy,
-                Rate = villa.Rate,
-                Sqft = villa.Sqft
-            };
-
-            return Ok(villaDTO);
-
+            return Ok(_mappper.Map<VillaDTO>(villa));
         }
 
 
@@ -88,42 +70,29 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<VillaDTO?> CreateVilla(VillaDTO villa)
+        public async Task<ActionResult<CreateVillaRequest?>> CreateVilla(CreateVillaRequest villaReq)
         {
 
             //if (!ModelState.IsValid)
             //    return BadRequest();
 
-            if (_db.Villas.FirstOrDefault(v => v.Name == villa.Name) != null)
+            Villa? villa = await _dbvilla.Get(v => v.Name == villaReq.Name);
+
+            if (villa != null)
             {
                 ModelState.AddModelError("", "Dublicated Name");
                 return BadRequest(ModelState);
             }
 
 
-            if (villa.Id != 0)
-            {
-                return BadRequest();
-            }
+
+            var newVilla = _mappper.Map<Villa>(villaReq);
 
 
-            var newVilla = new Villa()
-            {
+            newVilla.CreatedAt = DateTime.Now;
+            newVilla.UpdatedAt = DateTime.Now;
+            await _dbvilla.CreateAsync(newVilla);
 
-                Name = villa.Name,
-                Amenity = villa.Amenity,
-                Details = villa.Details,
-                ImageUrl = villa.ImageUrl,
-                Occupancy = villa.Occupancy,
-                Rate = villa.Rate,
-                Sqft = villa.Sqft,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-
-            };
-
-            _db.Villas.Add(newVilla);
-            _db.SaveChanges();
 
 
             return CreatedAtRoute("GETVilla", new { Id = newVilla.Id }, newVilla);
@@ -135,59 +104,40 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Delete(int id)
+
+        public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0)
-            {
                 return BadRequest();
-            }
 
-            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == id);
 
-            if (villa == null)
-            {
-                return NotFound();
-            }
+            bool Deleted = await _dbvilla.Delete(v => v.Id == id);
 
-            _db.Villas.Remove(villa);
-            _db.SaveChanges();
 
-            return NoContent();
+            return Deleted ? NoContent() : NotFound();
         }
 
         [HttpPut("{id:int}", Name = "UpdateVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-
-        public IActionResult UpdateVilla(VillaDTO villaReq)
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateVilla(VillaDTO villaReq)
         {
             if (villaReq == null || villaReq.Id <= 0)
-            {
                 return BadRequest(villaReq);
-            }
 
-
-            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == villaReq.Id);
+            Villa? villa = await _dbvilla.Get(v => v.Id == villaReq.Id);
 
             if (villa == null)
-            {
                 return NotFound();
-            }
 
 
-            villa.Name = villaReq.Name;
-            villa.Rate = villaReq.Rate;
-            villa.Sqft = villaReq.Sqft;
-            villa.Occupancy = villaReq.Occupancy;
-            villa.Amenity = villaReq.Amenity;
-            villa.Details = villaReq.Details;
-            villa.ImageUrl = villaReq.ImageUrl;
+            var villaUpdated = _mappper.Map<Villa>(villaReq);
 
-            _db.Update(villa);
-            _db.SaveChanges();
+            Villa? villaToUpdated = await _dbvilla.UpdateAsync(villaUpdated);
 
-            return NoContent();
+            return villaToUpdated != null ? NoContent() : NotFound();
 
         }
 
@@ -196,49 +146,25 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public IActionResult UpdatePartialVilla(int id, JsonPatchDocument<VillaDTO> patchDocument)
+        public async Task<IActionResult> UpdatePartialVilla(int id, JsonPatchDocument<VillaDTO> patchDocument)
         {
             if (patchDocument == null)
-            {
                 return BadRequest(patchDocument);
-            }
 
 
-            Villa? villa = _db.Villas.FirstOrDefault(v => v.Id == id);
+            Villa? villa = await _dbvilla.Get(v => v.Id == id);
 
             if (villa == null)
-            {
                 return NotFound();
-            }
-
-            VillaDTO villaDTO = new VillaDTO
-            {
-                Id = villa.Id,
-                Name = villa.Name,
-                Amenity = villa.Amenity,
-                Details = villa.Details,
-                ImageUrl = villa.ImageUrl,
-                Occupancy = villa.Occupancy,
-                Rate = villa.Rate,
-                Sqft = villa.Sqft
-            };
-
-            patchDocument.ApplyTo(villaDTO, ModelState);
 
 
+            var villaPartialUpdated = _mappper.Map<VillaDTO>(villa);
 
+            patchDocument.ApplyTo(villaPartialUpdated, ModelState);
 
-            villa.Name = villaDTO.Name;
-            villa.Amenity = villaDTO.Amenity;
-            villa.Details = villaDTO.Details;
-            villa.ImageUrl = villaDTO.ImageUrl;
-            villa.Occupancy = villaDTO.Occupancy;
-            villa.Rate = villaDTO.Rate;
-            villa.Sqft = villaDTO.Sqft;
+            var villaUpdated = _mappper.Map<Villa>(villaPartialUpdated);
 
-
-            _db.Update(villa);
-            _db.SaveChanges();
+            await _dbvilla.UpdateAsync(villaUpdated);
 
 
             if (!ModelState.IsValid)

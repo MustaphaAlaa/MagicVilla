@@ -1,5 +1,9 @@
+using MagicVilla_VillaApi;
 using MagicVilla_VillaApi.Model;
+using MagicVilla_VillaApi.Repository;
+using MagicVilla_VillaApi.Repository.interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,10 +15,17 @@ Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
 
 builder.Host.UseSerilog();
 
+
+
+
 builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 
 builder.Services.AddDbContext<VillaDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
