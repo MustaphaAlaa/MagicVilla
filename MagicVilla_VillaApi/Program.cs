@@ -5,7 +5,7 @@ using MagicVilla_VillaApi.Repository.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-
+using AutoMapper;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,6 +21,7 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddScoped<IVillaRepository, VillaRepository>();
+builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
 
 builder.Services.AddDbContext<VillaDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));

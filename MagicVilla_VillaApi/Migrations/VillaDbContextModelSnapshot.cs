@@ -70,67 +70,103 @@ namespace MagicVilla_VillaApi.Migrations
                         {
                             Id = 1,
                             Amenity = "Swimming pool, jacuzzi, gym",
-                            CreatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6823),
+                            CreatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2836),
                             Details = "This is a beautiful villa with 1 bedroom and 1 bathroom.",
                             ImageUrl = "villa1.jpg",
                             Name = "Villa 1",
                             Occupancy = 5,
                             Rate = 101.0,
                             Sqft = 2001,
-                            UpdatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6873)
+                            UpdatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2900)
                         },
                         new
                         {
                             Id = 2,
                             Amenity = "Swimming pool, jacuzzi, gym",
-                            CreatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6876),
+                            CreatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2904),
                             Details = "This is a beautiful villa with 2 bedrooms and 2 bathrooms.",
                             ImageUrl = "villa2.jpg",
                             Name = "Villa 2",
                             Occupancy = 6,
                             Rate = 102.0,
                             Sqft = 2002,
-                            UpdatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6877)
+                            UpdatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2906)
                         },
                         new
                         {
                             Id = 3,
                             Amenity = "Swimming pool, jacuzzi, gym",
-                            CreatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6879),
+                            CreatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2908),
                             Details = "This is a beautiful villa with 3 bedrooms and 3 bathrooms.",
                             ImageUrl = "villa3.jpg",
                             Name = "Villa 3",
                             Occupancy = 7,
                             Rate = 103.0,
                             Sqft = 2003,
-                            UpdatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6881)
+                            UpdatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2909)
                         },
                         new
                         {
                             Id = 4,
                             Amenity = "Swimming pool, jacuzzi, gym",
-                            CreatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6883),
+                            CreatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2912),
                             Details = "This is a beautiful villa with 4 bedrooms and 4 bathrooms.",
                             ImageUrl = "villa4.jpg",
                             Name = "Villa 4",
                             Occupancy = 8,
                             Rate = 104.0,
                             Sqft = 2004,
-                            UpdatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6884)
+                            UpdatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2913)
                         },
                         new
                         {
                             Id = 5,
                             Amenity = "Swimming pool, jacuzzi, gym",
-                            CreatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6886),
+                            CreatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2915),
                             Details = "This is a beautiful villa with 5 bedrooms and 5 bathrooms.",
                             ImageUrl = "villa5.jpg",
                             Name = "Villa 5",
                             Occupancy = 9,
                             Rate = 105.0,
                             Sqft = 2005,
-                            UpdatedAt = new DateTime(2024, 9, 26, 12, 18, 58, 963, DateTimeKind.Local).AddTicks(6887)
+                            UpdatedAt = new DateTime(2024, 10, 1, 5, 15, 26, 449, DateTimeKind.Local).AddTicks(2917)
                         });
+                });
+
+            modelBuilder.Entity("MagicVilla_VillaApi.Model.VillaNumber", b =>
+                {
+                    b.Property<int>("VillaNo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SpecialDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VillaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("VillaNo");
+
+                    b.HasIndex("VillaId");
+
+                    b.ToTable("villaNumbers");
+                });
+
+            modelBuilder.Entity("MagicVilla_VillaApi.Model.VillaNumber", b =>
+                {
+                    b.HasOne("MagicVilla_VillaApi.Model.Villa", "Villa")
+                        .WithMany()
+                        .HasForeignKey("VillaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Villa");
                 });
 #pragma warning restore 612, 618
         }

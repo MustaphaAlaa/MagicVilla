@@ -10,10 +10,10 @@ namespace MagicVilla_VillaApi.Repository
     {
 
         VillaDbContext _db;
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
         public VillaRepository(IMapper mapper, VillaDbContext db) : base(db)
         {
-            _mapper = mapper;
+            //_mapper = mapper;
             _db = db;
         }
 
