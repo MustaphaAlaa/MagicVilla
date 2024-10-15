@@ -86,6 +86,7 @@ namespace MagicVilla_VillaApi.Controllers
                 _apiResponse.StatusCode = HttpStatusCode.OK;
 
                 _apiResponse.Result = _mappper.Map<VillaDTO>(villa);
+                _apiResponse.IsSuccess = true;
                 return Ok(_apiResponse);
 
             }
@@ -189,6 +190,7 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> UpdateVilla(VillaDTO villaReq)
         {
@@ -215,6 +217,7 @@ namespace MagicVilla_VillaApi.Controllers
                 Villa? villaToUpdated = await _dbvilla.UpdateAsync(villaUpdated);
                 _apiResponse.IsSuccess = true;
                 _apiResponse.Result = villaReq;
+                _apiResponse.StatusCode = HttpStatusCode.NoContent;
                 //return villaToUpdated != null ? Ok(_apiResponse) : NotFound(_apiResponse);
                 return Ok(_apiResponse);
             }

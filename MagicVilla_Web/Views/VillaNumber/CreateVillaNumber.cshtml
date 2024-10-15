@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "Create Villa";
+}
+
+@model CreateVillaRequest
+
+
+<div class="container">
+
+    <div class="container">
+        <h1>Add New Villa</h1>
+        <hr />
+    </div>
+
+     
+
+
+    <div class="container">
+            <form  method="post" asp-action="Create" asp-controller="Villa">
+                 
+                 <div class=" form-group m-2">
+                     <label class="m-2" for="Name">Name: </label>
+                     <input id="Name" type="text" asp-for="Name" class="form-control"/>
+                 </div>
+                 
+                 <div class=" form-group m-2">
+                     <label class="m-2" for="Details">Details: </label>
+                     <textarea id="Details" class="form-control" asp-for="Details"></textarea>
+                 </div>
+                 
+                 <div class=" form-group m-2">
+                     <label class="m-2" for="Amenity">Amenity: </label>
+                     <textarea id="Amenity" class="form-control" asp-for="Amenity"></textarea>
+                 </div>
+                       
+                 <div class=" form-group m-2">
+                     <label class="m-2" for="ImgUrl">Image Url: </label>
+                     <textarea id="ImgUrl" class="form-control" asp-for="ImageUrl"></textarea>
+                 </div>
+
+
+                <div class=" form-group m-2">
+                    <label class="m-2" for="Sqft">Sqft: </label>
+                    <input id="Sqft" type="number" asp-for="Sqft" class="form-control"  />
+                </div>
+                
+                <div class=" form-group m-2">
+                    <label class="m-2" for="Rate">Rate: </label>
+                    <input id="Rate" type="number" asp-for="Rate" class="form-control"   />
+                </div>
+                
+                <div class=" form-group m-2">
+                <label class="m-2" for="Occupancy">Occupancy: </label>
+                <input id="Occupancy" type="number" asp-for="Occupancy" class="form-control"   />
+                </div>
+
+                <input type="submit"  class="btn btn-success" value="Add"/>
+        </form>
+    </div>
+
+
+
+
+</div>

@@ -7,13 +7,13 @@ using static System.Net.WebRequestMethods;
 namespace MagicVilla_Web.Services
 {
 
-    public class VillaService : BaseServices, IVillaService
+    public class VillaNumberService : BaseServices, IVillaNumberService
     {
 
         private readonly IHttpClientFactory _clientFactory;
         private readonly IConfiguration _configuration;
         private string ApiUrl;
-        public VillaService(IHttpClientFactory httpClientFactory, IConfiguration configuration) : base(httpClientFactory)
+        public VillaNumberService(IHttpClientFactory httpClientFactory, IConfiguration configuration) : base(httpClientFactory)
         {
             _configuration = configuration;
             _clientFactory = httpClientFactory;
@@ -23,7 +23,7 @@ namespace MagicVilla_Web.Services
 
         }
 
-        public Task<T> CreateAsync<T>(CreateVillaRequest dto)
+        public Task<T> CreateAsync<T>(CreateVillaNumberRequest dto)
         {
             return SendAsync<T>(new ApiRequest()
             {
@@ -64,13 +64,13 @@ namespace MagicVilla_Web.Services
             });
         }
 
-        public Task<T> UpdateAsync<T>(VillaDTO dto)
+        public Task<T> UpdateAsync<T>(VillaNumberDTO dto)
         {
             return SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.PUT,
                 Data = dto,
-                URL = ApiUrl + $"/api/villaapi/{dto.Id}"
+                URL = ApiUrl + $"/api/villaapi/{dto.VillaNo}"
             });
         }
     }

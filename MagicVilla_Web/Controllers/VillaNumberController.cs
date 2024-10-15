@@ -1,19 +1,16 @@
 ﻿using MagicVilla_Web.Models;
-using MagicVilla_Web.Models.DTO;
 using MagicVilla_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace MagicVilla_Web.Controllers
 {
-
-
-    public class VillaController : Controller
+    public class VillaNumberController : Controller
     {
 
         private readonly IVillaService _villa;
 
-        public VillaController(IVillaService villa)
+        public VillaNumberController(IVillaService villa)
         {
             _villa = villa;
         }
