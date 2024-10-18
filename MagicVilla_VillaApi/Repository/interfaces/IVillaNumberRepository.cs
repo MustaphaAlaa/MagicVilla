@@ -5,6 +5,6 @@ namespace MagicVilla_VillaApi.Repository.interfaces
 {
     public interface IVillaNumberRepository : IRepository<VillaNumber>
     {
-        Task<VillaNumber?> UpdateAsync(VillaNumber villaNo);
+        Task<VillaNumber?> UpdateAsync(VillaNumber villaNo, int id);
     }
 }

@@ -1,17 +1,17 @@
-﻿@model List<VillaDTO>;
+﻿@model List<VillaNumberDTO>;
 
 @{
-    ViewData["Title"] = "Villa Page";
+    ViewData["Title"] = "Villa Number Page";
 }
 
-<div class="container">
+<div class="container w-75 h-75 border p-3 mt-5">
 
 
 
     <div class=" d-flex  justify-content-between  m-3">
-            <h1 class="display-4">All Villas</h1>
+            <h3  > Villas Number List</h3>
         
-            <a class="btn btn-primary    align-self-center" asp-controller="Villa" asp-action="CreateVilla">
+            <a class="btn btn-primary    align-self-center" asp-controller="VillaNumber" asp-action="CreateVillaNumber">
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
@@ -22,61 +22,77 @@
         </a>
  
     </div>
+ 
 
-    
-
-
-<table class="table table-bordered table-hover table-striped">
+   @if(Model.Count != 0 ) {  
+<table class="table table-bordered table-hover  ">
 
     <thead>
         
-        <tr   >
-                <th >Name</th>
-                <th  >Sqft</th>
-                <th  >Rate</th>
-                <th  >Options</th>
+        <tr>
+            <th>Villa Name</th>
+            <th>Villa Number</th>
+            <th>Options</th>
         </tr>
     </thead>
-    <tbody>
-        
-        @foreach(var villa in Model) { 
-            <tr  >
-            <td>
-                    <a asp-controller = "Villa"  class="link-primary"  asp-action="GetById" asp-route-id = "@villa.Id">
-                         @villa.Name
-                    </a> 
-            </td>
-                <td >@villa.Sqft</td>
-                    <td   >@villa.Rate</td>
-                    <td class="d-flex  justify-content-center">
-                         <a class="btn btn-danger text-white "
-                        asp-controller="Villa"
-                        asp-action="DeleteVilla"
-                        asp-route-id="@villa.Id">
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                            </svg>
+    <tbody> 
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="VillaNumber" class="link-light" asp-action="GetById" asp-route-id="@item.VillaNo">
+                            @item.Villa.Name
                         </a>
-                   
-                 
-                        <a class="btn btn-warning text-white "
-                        asp-controller="Villa"
-                        asp-action="UpdateVilla"
-                        asp-route-id="@villa.Id">
-                            
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                    </td>
+                    <td>@item.VillaNo</td>
+
+                       
+
+
+                        <td class="d-flex  justify-content-center">
+
+                            <a class="btn btn-warning text-white "
+                               asp-controller="VillaNumber"
+                               asp-action="UpdateVillaNumber"
+                               asp-route-id="@item.VillaNo">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
                                     <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
                                     <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z" />
-                            </svg>
-                        
-                        </a>
-                   
-                </td>
-            </tr>
+                                </svg>
 
-        }
+                            </a>
+
+
+                            <a class="btn btn-danger text-white "
+                               asp-controller="VillaNumber"
+                               asp-action="DeleteVillaNumber"
+                               asp-route-id="@item.VillaNo">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                </svg>
+                            </a>
+
+
+
+
+                    </td>
+              
+                
+                
+                </tr>
+
+            }
+
+
 
     </tbody>
 </table>
+
+} 
+else{
+        <h2>There's No Villa Numbers Yet </h2>
+}
+
 </div>

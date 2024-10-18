@@ -5,6 +5,6 @@ namespace MagicVilla_Web.Services.IServices
     public interface IVillaNumberService : IGetAsync, IDeleteAsync
     {
         Task<T> CreateAsync<T>(CreateVillaNumberRequest dto);
-        Task<T> UpdateAsync<T>(VillaNumberDTO dto);
+        Task<T> UpdateAsync<T>(UpdateVillaNumber dto, int VillaID);
     }
 }

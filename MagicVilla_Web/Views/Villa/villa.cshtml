@@ -3,68 +3,78 @@
     ViewData["Title"] = "Villa";
 }
 
+
+@section CoverImg{
+   <div class="p-3"> 
+       <img class="w-100 h-50" src="@Model.ImageUrl"/>
+   </div>
+}
+
+
+<div class="text-center ">
+    <h1 class="display-4">@Model.Name</h1>
+</div>
+
+ 
+
+
 <div class="container">
-
-
-    <div class="text-center ">
-        <h1 class="display-4">@Model.Name</h1>
-    </div>
-
+    
     <hr />
-    <div class="container w-75 p-3">
+    <div class="container w-75 p-3 bg-light bg-opacity-10">
        
      
-        <div class="row">
-            <div class="col-3 font-weight-bold align-content-center text-center bg-light">
+        <div class="row align-items-center">
+            <div class="col-3 font-weight-bold  text-center bg-light text-black m-0 p-1">
                 <p>Title</p>
             </div>
-            <div class="col-9 text-center  ">
+            <div class="col-9 text-center  m-0 p-1">
                 <p>@Model.Name</p>
             </div>
         </div>
     
         <div class="row">
-            <div class="col-3 font-weight-bold align-content-center text-center ">
+            <div class="col-3 font-weight-bold align-content-center text-center  m-0 p-1">
                 <p>Details</p>
             </div>
-            <div class="col-9 text-center   bg-light">
+            <div class="col-9 text-center   bg-light text-black m-0 p-1">
                 <p>@Model.Details</p>
             </div>
         </div>
     
         <div class="row">
-            <div class="col-3 font-weight-bold align-content-center text-center bg-light">
+            <div class="col-3 font-weight-bold align-content-center text-center bg-light text-black m-0 p-1">
                 <p>Amenity</p>
             </div>
-            <div class="col-9 text-center    ">
+            <div class="col-9 text-center    m-0 p-1">
                 <p>@Model.Amenity</p>
             </div>
         </div>
     
         <div class="row">
-            <div c class="col-3 font-weight-bold align-content-center text-center ">
+            <div class="col-3 font-weight-bold align-content-center text-center m-0 p-1">
                 <p>Occupancy</p>
             </div>
-            <div class="col-9 text-center  bg-light">
+            <div class="col-9 text-center   bg-light text-black m-0 p-1">
                 <p>@Model.Occupancy</p>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-3 font-weight-bold align-content-center text-center bg-light">
+            <div class="col-3 font-weight-bold  text-center bg-light text-black m-0 p-1">
                 <p>Sqft</p>
             </div>
-            <div class="col-9 text-center  ">
+            <div class="col-9 text-center  m-0 p-1">
                 <p>@Model.Sqft</p>
             </div>
         </div>
 
 
         <div class="row">
-            <div class="col-3 font-weight-bold align-content-center text-center ">
+            <div class="col-3 font-weight-bold  m-0 p-1 ">
                 <p>Rate</p>
             </div>
-            <div class="col-9 text-center   bg-light">
+            <div class="col-9 text-center   bg-light text-black m-0 p-1">
                 <p>@Model.Rate</p>
             </div>
         </div>

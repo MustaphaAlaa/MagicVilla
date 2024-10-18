@@ -18,9 +18,7 @@ namespace MagicVilla_Web.Models.DTO
 
         public DateTime? UpdatedAt { get; set; }
 
-
+        public VillaDTO Villa { get; set; }
 
     }
-
-
 }

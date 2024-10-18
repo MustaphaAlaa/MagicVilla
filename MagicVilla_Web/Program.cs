@@ -1,3 +1,4 @@
+using MagicVilla_VillaApi;
 using MagicVilla_Web.Services;
 using MagicVilla_Web.Services.IServices;
 
@@ -16,6 +17,10 @@ namespace MagicVilla_Wueb
             builder.Services.AddHttpClient<IVillaService, VillaService>();
             builder.Services.AddScoped<IVillaService, VillaService>();
 
+            builder.Services.AddHttpClient<IVillaNumberService, VillaNumberService>();
+            builder.Services.AddScoped<IVillaNumberService, VillaNumberService>();
+
+            builder.Services.AddAutoMapper(typeof(MappingConfig));
 
             var app = builder.Build();
 

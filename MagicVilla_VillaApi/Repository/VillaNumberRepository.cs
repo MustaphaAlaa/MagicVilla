@@ -1,4 +1,5 @@
 ﻿using MagicVilla_VillaApi.Model;
+using MagicVilla_VillaApi.Model.DTO;
 using MagicVilla_VillaApi.Repository.interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -16,9 +17,9 @@ namespace MagicVilla_VillaApi.Repository
             _db = db;
         }
 
-        public async Task<VillaNumber?> UpdateAsync(VillaNumber villaNo)
+        public async Task<VillaNumber?> UpdateAsync(VillaNumber villaNo, int id)
         {
-            VillaNumber? villaNumber = await _db.villaNumbers.FirstOrDefaultAsync(v => v.VillaNo == villaNo.VillaNo);
+            VillaNumber? villaNumber = await _db.villaNumbers.FirstOrDefaultAsync(v => v.VillaNo == id);
 
             if (villaNumber == null)
                 return null;
@@ -35,5 +36,19 @@ namespace MagicVilla_VillaApi.Repository
             return updated > 0 ? villaNo : null;
 
         }
+
+
+        public override async Task<IEnumerable<VillaNumber>> GetAllAsync()
+        {
+            return await _db.villaNumbers.Include(vm => vm.Villa).ToListAsync();
+
+        }
+
+
+        public override async Task<VillaNumber?> Get(Expression<Func<VillaNumber, bool>> exp)
+        {
+            return await _db.villaNumbers.AsNoTracking().Include(v => v.Villa).FirstOrDefaultAsync(exp);
+        }
+
     }
 }

@@ -23,27 +23,27 @@ namespace MagicVilla_VillaApi.Repository
 
         public async Task<bool> Delete(Expression<Func<T, bool>> exp)
         {
-
             var entity = await _dbSet.FirstOrDefaultAsync(exp);
 
             if (entity == null)
                 return false;
 
             _dbSet.Remove(entity);
+
             var deleted = await _db.SaveChangesAsync();
 
             return deleted > 0;
-
         }
 
-        public async Task<T?> Get(Expression<Func<T, bool>> exp)
+        public virtual async Task<T?> Get(Expression<Func<T, bool>> exp)
         {
             return await _dbSet.AsNoTracking().FirstOrDefaultAsync(exp);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
+
         }
     }
 }

@@ -83,7 +83,7 @@ namespace MagicVilla_VillaApi.Controllers
                 }
 
                 _apiResponse.StatusCode = HttpStatusCode.OK;
-
+                _apiResponse.IsSuccess = true;
                 _apiResponse.Result = _mappper.Map<VillaNumberDTO>(villaNo);
                 return Ok(_apiResponse);
 
@@ -198,7 +198,7 @@ namespace MagicVilla_VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> UpdateVillaNo(UpdateVillaNumber villaReq)
+        public async Task<ActionResult<APIResponse>> UpdateVillaNo(UpdateVillaNumber villaReq, int id)
         {
             try
             {
@@ -209,7 +209,7 @@ namespace MagicVilla_VillaApi.Controllers
                     return BadRequest(_apiResponse);
                 }
 
-                VillaNumber? VillaNo = await _dbVillaNo.Get(v => v.VillaNo == villaReq.VillaNo);
+                VillaNumber? VillaNo = await _dbVillaNo.Get(v => v.VillaNo == id);
 
                 if (VillaNo == null)
                 {
@@ -227,14 +227,14 @@ namespace MagicVilla_VillaApi.Controllers
 
                     _apiResponse.ErrorMessages = new List<string>() { "  Villa  Dosen't Exist" };
                     _apiResponse.StatusCode = HttpStatusCode.NotFound;
-
+                    _apiResponse.IsSuccess = true;
                     return NotFound(_apiResponse);
                 }
 
 
                 var villaUpdated = _mappper.Map<VillaNumber>(villaReq);
 
-                VillaNumber? villaToUpdated = await _dbVillaNo.UpdateAsync(villaUpdated);
+                VillaNumber? villaToUpdated = await _dbVillaNo.UpdateAsync(villaUpdated, id);
                 _apiResponse.IsSuccess = true;
                 _apiResponse.Result = villaReq;
                 return Ok(_apiResponse);
@@ -296,7 +296,7 @@ namespace MagicVilla_VillaApi.Controllers
 
                 var villaUpdated = _mappper.Map<VillaNumber>(villaPartialUpdated);
 
-                await _dbVillaNo.UpdateAsync(villaUpdated);
+                await _dbVillaNo.UpdateAsync(villaUpdated, id);
 
 
                 if (!ModelState.IsValid)
@@ -316,11 +316,6 @@ namespace MagicVilla_VillaApi.Controllers
             return _apiResponse;
 
         }
-
-
-
-
-
 
     }
 }

@@ -1,32 +1,36 @@
 using MagicVilla_Web.Models;
+using MagicVilla_Web.Models.DTO;
+using MagicVilla_Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
-namespace MagicVilla_Web.Controllers
+namespace MagicVilla_Web.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+    private readonly IVillaService _villa;
+
+
+    public HomeController(ILogger<HomeController> logger, IVillaService villa)
     {
-        private readonly ILogger<HomeController> _logger;
+        _villa = villa;
+        _logger = logger;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
+
+    public async Task<IActionResult> Index()
+    {
+        var Villas = await _villa.GetAllAsync<ApiResponse>();
+
+        List<VillaDTO?> VillasList = new();
+        if (Villas != null && Villas.IsSuccess)
         {
-            _logger = logger;
+            VillasList = JsonConvert.DeserializeObject<List<VillaDTO?>>(Convert.ToString(Villas.Result));
+            return View(VillasList);
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View(VillasList);
     }
 }

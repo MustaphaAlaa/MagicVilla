@@ -19,7 +19,7 @@ namespace MagicVilla_Web.Services
             _clientFactory = httpClientFactory;
             _configuration.GetValue<string>("ServiceUrls:VillaApi");
 
-            ApiUrl = _configuration.GetValue<string>("ServiceUrls:VillaApi");
+            ApiUrl = _configuration.GetValue<string>("ServiceUrls:VillaApi") + "/api/VillaNumber/";
 
         }
 
@@ -29,7 +29,7 @@ namespace MagicVilla_Web.Services
             {
                 ApiType = ApiType.POST,
                 Data = dto,
-                URL = ApiUrl + "/api/VillaAPI"
+                URL = ApiUrl
 
             });
         }
@@ -40,7 +40,7 @@ namespace MagicVilla_Web.Services
             {
                 ApiType = ApiType.DELETE,
                 Data = id,
-                URL = ApiUrl + $"/api/villaapi/{id}"
+                URL = ApiUrl + id
             });
         }
 
@@ -51,7 +51,7 @@ namespace MagicVilla_Web.Services
             {
                 ApiType = ApiType.GET,
 
-                URL = ApiUrl + "/api/villaapi"
+                URL = ApiUrl
             });
         }
 
@@ -60,17 +60,17 @@ namespace MagicVilla_Web.Services
             return SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.GET,
-                URL = ApiUrl + $"/api/villaapi/{id}"
+                URL = ApiUrl + id
             });
         }
 
-        public Task<T> UpdateAsync<T>(VillaNumberDTO dto)
+        public Task<T> UpdateAsync<T>(UpdateVillaNumber dto, int VillaNO)
         {
             return SendAsync<T>(new ApiRequest()
             {
                 ApiType = ApiType.PUT,
                 Data = dto,
-                URL = ApiUrl + $"/api/villaapi/{dto.VillaNo}"
+                URL = ApiUrl + VillaNO
             });
         }
     }

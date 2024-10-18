@@ -18,6 +18,7 @@ namespace MagicVilla_VillaApi.Model.DTO
 
         public DateTime? UpdatedAt { get; set; }
 
+        public VillaDTO Villa { get; set; }
 
 
     }
